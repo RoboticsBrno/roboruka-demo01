@@ -22,8 +22,8 @@
 #define NAME "FlusMcRuka"
 
 // CHANGE THESE to your WiFi's settings
-#define WIFI_NAME "Technika"
-#define WIFI_PASSWORD "materidouska"
+#define WIFI_NAME "RukoKraj"
+#define WIFI_PASSWORD "PlnoRukou"
 
 using namespace rb;
 

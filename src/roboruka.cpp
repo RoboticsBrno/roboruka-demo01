@@ -7,10 +7,6 @@
 #include "roboruka.hpp"
 #include "motors.hpp"
 
-// CHANGE THESE to your WiFi's settings
-#define WIFI_NAME "Technika"
-#define WIFI_PASSWORD "materidouska"
-
 using namespace rb;
 
 std::unique_ptr<Arm> roborukaBuildArm() {
