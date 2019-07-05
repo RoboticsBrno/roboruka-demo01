@@ -327,8 +327,10 @@
 
             if(this.arm) {
                 var pos = this.arm.getTargetPos();
-                pos["c"] = "arm";
-                this.socket.send(JSON.stringify(pos));
+                if(pos !== null) {
+                    pos["c"] = "arm";
+                    this.socket.send(JSON.stringify(pos));
+                }
             }
         }
 

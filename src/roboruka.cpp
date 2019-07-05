@@ -52,8 +52,9 @@ void roborukaSendArmInfo(Protocol& prot, const Arm::Definition& def) {
     for(const auto& b : def.bones) {
         const auto pos = servo.pos(b.servo_id);
         if(pos.isNaN()) {
-            ESP_LOGE("RBControl", "Rejecting arminfo, servo %d returned NaN position!", b.servo_id);
-            return;
+            while(bones->size() != 0)
+                bones->remove(bones->size()-1);
+            break;
         }
 
         auto *info_b = new rbjson::Object();
@@ -83,7 +84,8 @@ void roborukaSetup() {
 
     // Set-up servos
     auto& servos = man.initSmartServoBus(3);
-    servos.setAutoStop(2);
+    if(!servos.posOffline(2).isNaN())
+        servos.setAutoStop(2);
     servos.limit(0,  0_deg, 220_deg);
     servos.limit(1, 85_deg, 210_deg);
     servos.limit(2, 75_deg, 160_deg);

@@ -116,6 +116,11 @@ Animation.prototype.update = function() {
 }
 
 function Arm(info, canvasId, manager) {
+    if(info.bones.length === 0) {
+        this.bones = null;
+        return;
+    }
+
     this.BODY_HEIGHT = info.height;
     this.BODY_RADIUS = info.radius;
     this.ARM_BASE_HEIGHT = info.off_y;
@@ -337,6 +342,9 @@ Arm.prototype.run = function() {
 }
 
 Arm.prototype.getTargetPos = function() {
+    if(this.bones === null)
+        return null;
+
     var end = this.bones[this.bones.length-1];
     return {
         "x": end.x / this.unit,
