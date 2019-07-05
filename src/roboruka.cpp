@@ -24,8 +24,8 @@ std::unique_ptr<Arm> roborukaBuildArm() {
         return servoAng - Angle::Pi - 30_deg;
     });
 
-    auto b1 = builder.bone(1, 120);
-    b1.relStops(30_deg, 155_deg)
+    auto b1 = builder.bone(1, 130);
+    b1.relStops(30_deg, 170_deg)
         .absStops(-20_deg, Angle::Pi)
         .baseRelStops(40_deg, 160_deg);
     b1.calcServoAng([](Angle absAngle, Angle) -> Angle {
