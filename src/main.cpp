@@ -72,13 +72,14 @@ void handleCommand(const std::string& command, rbjson::Object* pkt) {
     if(command == "joy") {
         motorsHandleJoysticks(pkt);
     } else if(command == "arm") {
-        const double x = pkt->getDouble("x");
-        const double y = pkt->getDouble("y");
-        gArm->solve(x, y);
-
-        auto& servos = Manager::get().servoBus();
-        for(const auto& b : gArm->bones()) {
-            servos.set(b.def.servo_id, b.servoAng() + Angle::deg(BONE_TRIMS[b.def.servo_id]), 200);
+        const double x = round(pkt->getDouble("x"));
+        const double y = round(pkt->getDouble("y"));
+        bool res = gArm->solve(x, y);
+        if(res) {
+            auto& servos = Manager::get().servoBus();
+            for(const auto& b : gArm->bones()) {
+                servos.set(b.def.servo_id, b.servoAng() + Angle::deg(BONE_TRIMS[b.def.servo_id]), 200);
+            }
         }
     } else if(command == "grab") {
         auto &servos = Manager::get().servoBus();

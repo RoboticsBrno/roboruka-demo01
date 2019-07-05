@@ -54,6 +54,7 @@ function Animation(arm) {
     this.keyframes = [];
     this.curFrame = -1;
     this.lastTick = null;
+    this.cmdSent = true;
 }
 
 Animation.prototype.addFrame = function(x, y, durationMs) {
@@ -80,6 +81,21 @@ Animation.prototype.nextFrame = function() {
     var b = this.arm.bones[this.arm.bones.length-1];
     f.start_x = b.x / this.arm.unit;
     f.start_y = b.y / this.arm.unit;
+
+    this.arm.pointer.x = f.x * this.arm.unit + this.arm.origin.x;
+    this.arm.pointer.y = f.y * this.arm.unit + this.arm.origin.y;
+    this.arm.run();
+
+    this.cmdSent = false;
+    var p = {
+        "x": f.x,
+        "y": f.y,
+    };
+    this.arm.manager.sendMustArrive("arm", p, true, function() {
+        this.cmdSent = true;
+        requestAnimationFrame(this.update.bind(this));
+    }.bind(this));
+
     return true;
 };
 
@@ -88,24 +104,20 @@ Animation.prototype.update = function() {
     var diff = now - this.lastTick;
     this.lastTick = now;
 
+    if(!this.cmdSent)
+        return;
+
+    if(this.curFrame >= this.keyframes.length) {
+        this.arm.animation = null;
+        return;
+    }
+
     var f = this.keyframes[this.curFrame];
     f.current += diff;
 
     var progress = f.current / f.duration;
     if(progress >= 1.0)
         progress = 1.0;
-
-    //var diff_x = f.x - f.start_x;
-    //this.arm.pointer.x = (f.start_x + diff_x*progress) * this.arm.unit + this.arm.origin.x;
-    //var diff_y = f.y - f.start_y;
-    //this.arm.pointer.y = (f.start_y + diff_y*progress) * this.arm.unit + this.arm.origin.y;
-    this.arm.pointer.x = f.x * this.arm.unit + this.arm.origin.x;
-    this.arm.pointer.y = f.y * this.arm.unit + this.arm.origin.y;
-    this.arm.run();
-
-    var b = this.arm.bones[this.arm.bones.length-1];
-    b.x = f.x;
-    b.y = f.y;
 
     if(progress >= 1.0 && !this.nextFrame()) {
         this.arm.animation = null;
@@ -195,7 +207,7 @@ function Arm(info, canvasId, manager) {
 }
 
 Arm.prototype.shouldSend = function() {
-    return this.touched || this.animation !== null;
+    return this.bones !== null && this.animation === null;
 }
 
 Arm.prototype.resize = function() {
@@ -237,17 +249,17 @@ Arm.prototype.handleButton = function(text) {
             if(this.animation !== null)
                  break;
             this.animation = new Animation(this);
-            this.animation.addFrame(130, -25, 500);
-            this.animation.addFrame(20, -16, 300);
+            this.animation.addFrame(145, -45, 200);
+            this.animation.addFrame(10.3, -50, 300);
             this.animation.start();
             break;
         case "EXTEND":
             if(this.animation !== null)
                  break;
             this.animation = new Animation(this);
-            this.animation.addFrame(130, -25, 500);
-            this.animation.addFrame(135, 18, 200);
-            this.animation.addFrame(118, 76, 200);
+            this.animation.addFrame(140, -45, 200);
+            this.animation.addFrame(180, 18, 300);
+            this.animation.addFrame(130, 79, 300);
             this.animation.start();
             break;
             break;
