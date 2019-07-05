@@ -52,7 +52,7 @@ void roborukaSetup() {
     rb_web_start(80);
 }
 
-std::unique_ptr<Arm> roborukaBuildArm() {
+Arm *roborukaBuildArm() {
     ArmBuilder builder;
     builder.body(60, 110).armOffset(0, 20);
 
@@ -78,7 +78,7 @@ std::unique_ptr<Arm> roborukaBuildArm() {
         return Arm::clamp(a - Angle::Pi*1.5);
     });
 
-    return builder.build();
+    return builder.build().release();
 }
 
 void roborukaSendArmInfo(Protocol& prot, const Arm::Definition& def) {

@@ -12,8 +12,8 @@
 
 using namespace rb;
 
-std::unique_ptr<Arm> gArm;
-std::unique_ptr<Protocol> gProtocol;
+Arm *gArm = nullptr;
+Protocol *gProtocol = nullptr;
 
 static void handleCommand(const std::string& command, rbjson::Object* pkt);
 static void main_program();
@@ -27,7 +27,7 @@ void setup() {
     roborukaSetup();
 
     // Initialize the communication protocol
-    gProtocol.reset(new Protocol(OWNER, NAME, "Compiled at " __DATE__ " " __TIME__, handleCommand));
+    gProtocol = new Protocol(OWNER, NAME, "Compiled at " __DATE__ " " __TIME__, handleCommand);
     gProtocol->start();
 
     main_program();
