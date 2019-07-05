@@ -52,12 +52,14 @@ void roborukaSendArmInfo(Protocol& prot, const Arm::Definition& def) {
 
     auto& servo = Manager::get().servoBus();
     for(const auto& b : def.bones) {
-        const auto pos = servo.pos(b.servo_id);
+        auto pos = servo.pos(b.servo_id);
         if(pos.isNaN()) {
             while(bones->size() != 0)
                 bones->remove(bones->size()-1);
             break;
         }
+
+        pos -= Angle::deg(BONE_TRIMS[b.servo_id]);
 
         auto *info_b = new rbjson::Object();
         info_b->set("len", b.length);
