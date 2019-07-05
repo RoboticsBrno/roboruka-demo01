@@ -17,13 +17,11 @@
 #include "motors.hpp"
 #include "roboruka.hpp"
 
-// CHANGE THESE so you can find the robot in the Android app
-#define OWNER "FrantaFlinta"
-#define NAME "FlusMcRuka"
+#include "config.hpp"
 
-// CHANGE THESE to your WiFi's settings
-#define WIFI_NAME "RukoKraj"
-#define WIFI_PASSWORD "PlnoRukou"
+
+static_assert(sizeof(OWNER) > 1, "The OWNER config variable is not set, change it in config.hpp!");
+static_assert(sizeof(NAME) > 1, "The NAME config variable is not set, change it in config.hpp!");
 
 using namespace rb;
 
@@ -75,11 +73,16 @@ void handleCommand(const std::string& command, rbjson::Object* pkt) {
         const double x = pkt->getDouble("x");
         const double y = pkt->getDouble("y");
         gArm->solve(x, y);
-        gArm->setServos(200);
+
+        auto& servos = Manager::get().servoBus();
+        for(const auto& b : gArm->bones()) {
+            servos.set(b.def.servo_id, b.servoAng() + Angle::deg(BONE_TRIMS[b.def.servo_id]), 200);
+        }
     } else if(command == "grab") {
         auto &servos = Manager::get().servoBus();
         const bool isGrabbing = servos.posOffline(2).deg() < 140;
-        servos.set(2, !isGrabbing ? 75_deg : 160_deg, 200.f, 1.f);
+        const auto angle = !isGrabbing ? 75_deg : 160_deg;
+        servos.set(2, angle + Angle::deg(BONE_TRIMS[2]), 200.f, 1.f);
     } else if(command == "arminfo") {
         roborukaSendArmInfo(*gProtocol, gArm->definition());
     }

@@ -1,0 +1,24 @@
+#pragma once
+#include "RBControl_angle.hpp"
+
+// CHANGE THESE so you can find the robot in the Android app
+#define OWNER ""
+#define NAME ""
+
+// CHANGE THESE to your WiFi's settings
+#define WIFI_NAME "RukoKraj"
+#define WIFI_PASSWORD "PlnoRukou"
+
+
+// Where are the motors connected
+#define MOTOR_LEFT rb::MotorId::M2
+#define MOTOR_RIGHT rb::MotorId::M1
+
+// Change these to 1 or -1 to switch motor polarity in software
+static constexpr int MOTOR_POLARITY_SWITCH_LEFT = 1;
+static constexpr int MOTOR_POLARITY_SWITCH_RIGHT = 1;
+
+
+// If your arm is built differently, you can adjust these trims which are added
+// to the calculated servo angles. They are in degrees.
+static constexpr float BONE_TRIMS[] = { 0.f, 0.f, 0.f };

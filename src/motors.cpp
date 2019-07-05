@@ -3,6 +3,8 @@
 
 #include "motors.hpp"
 
+#include "config.hpp"
+
 static int scale_range(float x, float omin, float omax, float nmin, float nmax) {
     return ((float(x) - omin) / (omax - omin)) * (nmax - nmin) - nmax;
 }
@@ -34,10 +36,13 @@ void motorsHandleJoysticks(rbjson::Object *pkt) {
         int r = ((y - (x/1.5f)));
         int l = ((y + (x/1.5f)));
         if(r < 0 && l < 0) {
-            int tmp = r; r = l; l = tmp;
+            std::swap(r, l);
         }
 
-        builder.power(MOTOR_LEFT, l).power(MOTOR_RIGHT, -r);
+        l *= MOTOR_POLARITY_SWITCH_LEFT;
+        r *= MOTOR_POLARITY_SWITCH_RIGHT;
+
+        builder.power(MOTOR_LEFT, l).power(MOTOR_RIGHT, r);
     }
 
     builder.set();

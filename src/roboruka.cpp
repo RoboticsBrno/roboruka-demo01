@@ -7,6 +7,8 @@
 #include "roboruka.hpp"
 #include "motors.hpp"
 
+#include "config.hpp"
+
 using namespace rb;
 
 std::unique_ptr<Arm> roborukaBuildArm() {
