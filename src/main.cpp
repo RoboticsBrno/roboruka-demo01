@@ -1,26 +1,14 @@
-#include <esp_log.h>
-#include <string.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <esp_system.h>
-
 #include <Arduino.h>
 
 #include "rbprotocol.h"
 #include "rbwebserver.h"
 
-#include "RBControl_manager.hpp"
-#include "RBControl_battery.hpp"
-#include "RBControl_arm.hpp"
+#include "RBControl.hpp"
 
 #include "motors.hpp"
 #include "roboruka.hpp"
 
 #include "config.hpp"
-
-
-static_assert(sizeof(OWNER) > 1, "The OWNER config variable is not set, change it in config.hpp!");
-static_assert(sizeof(NAME) > 1, "The NAME config variable is not set, change it in config.hpp!");
 
 using namespace rb;
 
@@ -51,8 +39,8 @@ void handleCommand(const std::string& command, rbjson::Object* pkt) {
     } else if(command == "arm") {
         const double x = round(pkt->getDouble("x"));
         const double y = round(pkt->getDouble("y"));
-        bool res = gArm->solve(x, y);
-        if(res) {
+
+        if(gArm->solve(x, y)) {
             auto& servos = Manager::get().servoBus();
             for(const auto& b : gArm->bones()) {
                 servos.set(b.def.servo_id, b.servoAng() + Angle::deg(BONE_TRIMS[b.def.servo_id]), 200);

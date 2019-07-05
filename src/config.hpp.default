@@ -31,6 +31,9 @@
 #define MOTOR_LEFT rb::MotorId::M2
 #define MOTOR_RIGHT rb::MotorId::M1
 
+// Limit the motor maximum power (percent)
+#define MOTOR_MAX_POWER_PCT 60
+
 // Change these to 1 or -1 to switch motor polarity in software
 static constexpr int MOTOR_POLARITY_SWITCH_LEFT = 1;
 static constexpr int MOTOR_POLARITY_SWITCH_RIGHT = 1;
@@ -39,3 +42,12 @@ static constexpr int MOTOR_POLARITY_SWITCH_RIGHT = 1;
 // If your arm is built differently, you can adjust these trims which are added
 // to the calculated servo angles. They are in degrees.
 static constexpr float BONE_TRIMS[] = { 0.f, 0.f, 0.f };
+
+
+
+
+
+
+// Check if the OWNER/NAME is set, DO NOT REMOVE - change the NAME/OWNER above instead.
+static_assert(sizeof(OWNER) > 1, "The OWNER config variable is not set, change it in config.hpp!");
+static_assert(sizeof(NAME) > 1, "The NAME config variable is not set, change it in config.hpp!");

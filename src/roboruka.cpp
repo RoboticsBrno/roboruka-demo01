@@ -23,8 +23,8 @@ void roborukaSetup() {
 
     // Set motor power limits
     man.setMotors()
-        .pwmMaxPercent(MOTOR_LEFT, 100)
-        .pwmMaxPercent(MOTOR_RIGHT, 100)
+        .pwmMaxPercent(MOTOR_LEFT, MOTOR_MAX_POWER_PCT)
+        .pwmMaxPercent(MOTOR_RIGHT, MOTOR_MAX_POWER_PCT)
         .set();
 
     // Set-up servos
