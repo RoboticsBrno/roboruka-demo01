@@ -48,15 +48,17 @@ void setup() {
     auto& batt = man.battery();
     batt.setCoef(9.185f);
 
-    // Connect to the WiFi network
-    // If the button 1 is not pressed: connect to WIFI_NAME
-    // else create an AP.
-    if(man.expander().digitalRead(SW1) != 0) {
+#ifndef WIFI_DEFAULT_AP
+    const auto wifi_checkval = 0;
+#else
+    const auto wifi_checkval = 1;
+#endif
+    if(man.expander().digitalRead(SW1) != wifi_checkval) {
         man.leds().yellow();
         WiFi::connect(WIFI_NAME, WIFI_PASSWORD);
     } else {
         man.leds().green();
-        WiFi::startAp("Flus" OWNER "-" NAME, "flusflus", 12);
+        WiFi::startAp(WIFI_AP_SSID, WIFI_AP_PASSWORD, WIFI_AP_CHANNEL);
     }
 
     // Initialize the communication protocol

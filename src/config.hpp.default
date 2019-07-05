@@ -5,9 +5,19 @@
 #define OWNER ""
 #define NAME ""
 
-// CHANGE THESE to your WiFi's settings
+
+// WiFi settings for the connect to existing network mode
 #define WIFI_NAME "RukoKraj"
 #define WIFI_PASSWORD "PlnoRukou"
+
+// WiFi settings for the access point mode
+#define WIFI_AP_SSID ("Flus" OWNER "-" NAME)
+#define WIFI_AP_PASSWORD "flusflus"
+#define WIFI_AP_CHANNEL 12
+
+// WiFi default mode can be switched by holding SW1 at startup.
+// Uncomment the line below to make the AP mode default.
+// #define WIFI_DEFAULT_AP 1
 
 
 // Where are the motors connected
