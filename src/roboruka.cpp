@@ -1,6 +1,7 @@
 #include <memory>
 #include "RBControl.hpp"
 #include "RBControl_arm.hpp"
+#include "RBControl_wifi.hpp"
 #include "rbprotocol.h"
 #include "rbwebserver.h"
 
@@ -10,6 +11,46 @@
 #include "config.hpp"
 
 using namespace rb;
+
+void roborukaSetup() {
+    // Initialize the robot manager
+    auto& man = Manager::get();
+    man.install();
+
+    // Set the battery measurement coeficient
+    auto& batt = man.battery();
+    batt.setCoef(BATTERY_COEFFICIENT);
+
+    // Set motor power limits
+    man.setMotors()
+        .pwmMaxPercent(MOTOR_LEFT, 100)
+        .pwmMaxPercent(MOTOR_RIGHT, 100)
+        .set();
+
+    // Set-up servos
+    auto& servos = man.initSmartServoBus(3);
+    if(!servos.posOffline(2).isNaN())
+        servos.setAutoStop(2);
+    servos.limit(0,  0_deg, 220_deg);
+    servos.limit(1, 85_deg, 210_deg);
+    servos.limit(2, 75_deg, 160_deg);
+
+    #ifndef WIFI_DEFAULT_AP
+    const auto wifi_checkval = 0;
+#else
+    const auto wifi_checkval = 1;
+#endif
+    if(man.expander().digitalRead(SW1) != wifi_checkval) {
+        man.leds().yellow();
+        WiFi::connect(WIFI_NAME, WIFI_PASSWORD);
+    } else {
+        man.leds().green();
+        WiFi::startAp(WIFI_AP_SSID, WIFI_AP_PASSWORD, WIFI_AP_CHANNEL);
+    }
+
+    // Start web server with control page (see data/index.html)
+    rb_web_start(80);
+}
 
 std::unique_ptr<Arm> roborukaBuildArm() {
     ArmBuilder builder;
@@ -73,27 +114,4 @@ void roborukaSendArmInfo(Protocol& prot, const Arm::Definition& def) {
         bones->push_back(info_b);
     }
     prot.send_mustarrive("arminfo", info.release());
-}
-
-void roborukaSetup() {
-    // Initialize the robot manager
-    auto& man = Manager::get();
-    man.install();
-
-    // Set motor power limits
-    man.setMotors()
-        .pwmMaxPercent(MOTOR_LEFT, 100)
-        .pwmMaxPercent(MOTOR_RIGHT, 100)
-        .set();
-
-    // Set-up servos
-    auto& servos = man.initSmartServoBus(3);
-    if(!servos.posOffline(2).isNaN())
-        servos.setAutoStop(2);
-    servos.limit(0,  0_deg, 220_deg);
-    servos.limit(1, 85_deg, 210_deg);
-    servos.limit(2, 75_deg, 160_deg);
-
-    // Start web server with control page (see data/index.html)
-    rb_web_start(80);
 }

@@ -5,6 +5,13 @@
 #define OWNER ""
 #define NAME ""
 
+// CHANGE THIS:
+// Set the battery measuring coefficient. It is different on every chip.
+// Measure voltage at battery connector and check the RAW value
+// in the serial output of this program and calculate the coeficient like this:
+// BATTERY_COEFFICIENT = voltageMeasureAtBatteriesInMilliVolts / RAW
+#define BATTERY_COEFFICIENT 9.185f
+
 
 // WiFi settings for the connect to existing network mode
 #define WIFI_NAME "RukoKraj"

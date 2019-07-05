@@ -11,7 +11,6 @@
 
 #include "RBControl_manager.hpp"
 #include "RBControl_battery.hpp"
-#include "RBControl_wifi.hpp"
 #include "RBControl_arm.hpp"
 
 #include "motors.hpp"
@@ -33,33 +32,11 @@ static void main_program();
 
 void loop() { }
 void setup() {
-    auto& man = Manager::get();
-
     // Build the arm definition
     gArm = roborukaBuildArm();
 
     // Initialize misc robot stuff
     roborukaSetup();
-
-    // =============================  !!!!README!!!  =============================
-    // Set the battery measuring coefficient.
-    // Measure voltage at battery connector and
-    // coef = voltageMeasureAtBatteriesInMilliVolts / raw
-    auto& batt = man.battery();
-    batt.setCoef(9.185f);
-
-#ifndef WIFI_DEFAULT_AP
-    const auto wifi_checkval = 0;
-#else
-    const auto wifi_checkval = 1;
-#endif
-    if(man.expander().digitalRead(SW1) != wifi_checkval) {
-        man.leds().yellow();
-        WiFi::connect(WIFI_NAME, WIFI_PASSWORD);
-    } else {
-        man.leds().green();
-        WiFi::startAp(WIFI_AP_SSID, WIFI_AP_PASSWORD, WIFI_AP_CHANNEL);
-    }
 
     // Initialize the communication protocol
     gProtocol.reset(new Protocol(OWNER, NAME, "Compiled at " __DATE__ " " __TIME__, handleCommand));
