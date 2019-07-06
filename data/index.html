@@ -93,6 +93,12 @@
 
   <script type="text/javascript">
     'use strict';
+    if(String.prototype.endsWith === undefined) {
+        String.prototype.endsWith = function(suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+    }
+
     function Joystick(elementId, color, keys, buttonText, buttonClickHandler) {
         var zone = document.getElementById(elementId);
 
